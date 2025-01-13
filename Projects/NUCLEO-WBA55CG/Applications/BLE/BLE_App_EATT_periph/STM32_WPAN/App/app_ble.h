@@ -1,0 +1,221 @@
+/* USER CODE BEGIN Header */
+/**
+  ******************************************************************************
+  * @file    app_ble.h
+  * @author  MCD Application Team
+  * @brief   Header for ble application
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2022 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
+/* USER CODE END Header */
+
+/* Define to prevent recursive inclusion -------------------------------------*/
+#ifndef APP_BLE_H
+#define APP_BLE_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* Includes ------------------------------------------------------------------*/
+
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+#include "ble_const.h"  
+
+/* USER CODE END Includes */
+
+/* Exported types ------------------------------------------------------------*/
+
+typedef enum
+{
+  APP_BLE_IDLE,
+  APP_BLE_LP_CONNECTING,
+  APP_BLE_CONNECTED_SERVER,
+  APP_BLE_CONNECTED_CLIENT,
+  APP_BLE_ADV_FAST,
+  APP_BLE_ADV_LP,
+  APP_BLE_ADV_NON_CONN_FAST,
+  APP_BLE_ADV_NON_CONN_LP,
+  /* USER CODE BEGIN APP_BLE_ConnStatus_t*/
+
+  /* USER CODE END APP_BLE_ConnStatus_t */
+} APP_BLE_ConnStatus_t;
+
+/**
+  * HCI Event Packet Types
+  */
+typedef __PACKED_STRUCT
+{
+  uint32_t *next;
+  uint32_t *prev;
+} BleEvtPacketHeader_t;
+
+typedef __PACKED_STRUCT
+{
+  uint8_t   evtcode;
+  uint8_t   plen;
+  uint8_t   payload[1];
+} BleEvt_t;
+
+typedef __PACKED_STRUCT
+{
+  uint8_t   type;
+  BleEvt_t  evt;
+} BleEvtSerial_t;
+
+typedef __PACKED_STRUCT __ALIGNED(4)
+{
+  BleEvtPacketHeader_t  header;
+  BleEvtSerial_t        evtserial;
+} BleEvtPacket_t;
+
+typedef enum
+{
+  PROC_GAP_GEN_PHY_TOGGLE,
+  PROC_GAP_GEN_CONN_TERMINATE,
+  PROC_GATT_EXCHANGE_CONFIG,
+  /* USER CODE BEGIN ProcGapGeneralId_t*/
+
+  /* USER CODE END ProcGapGeneralId_t */
+}ProcGapGeneralId_t;
+
+typedef enum
+{
+  PROC_GAP_PERIPH_ADVERTISE_START_LP,
+  PROC_GAP_PERIPH_ADVERTISE_START_FAST,
+  PROC_GAP_PERIPH_ADVERTISE_NON_CONN_START_LP,
+  PROC_GAP_PERIPH_ADVERTISE_NON_CONN_START_FAST,
+  PROC_GAP_PERIPH_ADVERTISE_STOP,
+  PROC_GAP_PERIPH_ADVERTISE_DATA_UPDATE,
+  PROC_GAP_PERIPH_CONN_PARAM_UPDATE,
+  /* USER CODE BEGIN ProcGapPeripheralId_t */
+
+  /* USER CODE END ProcGapPeripheralId_t */
+}ProcGapPeripheralId_t;
+
+typedef struct
+{
+  uint16_t Conn_Handle;
+  uint16_t Max_Transmission_Unit;
+  uint16_t Max_Payload_Size;
+  uint16_t Initial_Credits;
+  uint16_t SPSM;
+  uint8_t Channel_Number;
+  uint8_t Channel_Index_List;
+  uint16_t EATT_Bearer_connHdl[6];
+  /* USER CODE BEGIN BleCoCEATTContext_t */
+  
+  /* USER CODE END BleCoCEATTContext_t */
+}BleCoCEATTContext_t;
+
+typedef enum
+{
+  PROC_GAP_CENTRAL_SCAN_START,
+  PROC_GAP_CENTRAL_SCAN_TERMINATE,
+  /* USER CODE BEGIN ProcGapCentralId_t */
+
+  /* USER CODE END ProcGapCentralId_t */
+}ProcGapCentralId_t;
+
+/* USER CODE BEGIN ET */
+
+typedef struct
+{
+  uint8_t *pPayload;
+  uint32_t pPayload_n_1;
+  uint32_t pPayload_n;
+} CoC_Payload_t;
+
+typedef struct
+{
+  CoC_Payload_t                         DataTransfered;
+  uint16_t                              ConnectionHandle;
+  uint8_t                               DataLength;
+  uint8_t                               DataTable[(BLE_EVT_MAX_PARAM_LEN - 2) - 3];
+} COC_EATT_APP_ConnHandle_Not_evt_t;
+
+/* USER CODE END ET */
+
+/* Exported constants --------------------------------------------------------*/
+/* USER CODE BEGIN EC */
+/** 
+  * ST Manufacturer ID
+**/
+#define ST_MANUF_ID  0x30
+
+/** 
+  * BlueSTSDK Version
+**/
+enum
+{
+  BLUESTSDK_V1 =  0x01,
+  BLUESTSDK_V2 =  0x02
+};
+
+/** 
+  * BOARD ID 
+**/
+enum
+{
+  BOARD_ID_NUCLEO_WBA =  0x8B
+};
+
+/** 
+  * FIRMWARE ID 
+**/
+enum
+{
+  FW_ID_EATT_PERIPH =  0xE1,
+};
+/* USER CODE END EC */
+
+/* External variables --------------------------------------------------------*/
+
+/* USER CODE BEGIN EV */
+extern BleCoCEATTContext_t BleCoCEATTContext;
+/* USER CODE END EV */
+
+/* Exported macro ------------------------------------------------------------*/
+#define SCAN_WIN_MS(x) ((uint16_t)((x)/0.625f))
+#define SCAN_INT_MS(x) ((uint16_t)((x)/0.625f))
+#define CONN_INT_MS(x) ((uint16_t)((x)/1.25f))
+#define CONN_SUP_TIMEOUT_MS(x) ((uint16_t)((x)/10.0f))
+#define CONN_CE_LENGTH_MS(x) ((uint16_t)((x)/0.625f))
+
+#define HCI_LE_ADVERTISING_REPORT_RSSI(p) \
+        (*(int8_t*)((&((hci_le_advertising_report_event_rp0*)(p))-> \
+                      Advertising_Report[0].Length_Data) + 1 + \
+                    ((hci_le_advertising_report_event_rp0*)(p))-> \
+                    Advertising_Report[0].Length_Data))
+/* USER CODE BEGIN EM */
+
+/* USER CODE END EM */
+
+/* Exported functions prototypes ---------------------------------------------*/
+void APP_BLE_Init(void);
+APP_BLE_ConnStatus_t APP_BLE_Get_Server_Connection_Status(void);
+void APP_BLE_Procedure_Gap_General(ProcGapGeneralId_t ProcGapGeneralId);
+void APP_BLE_Procedure_Gap_Peripheral(ProcGapPeripheralId_t ProcGapPeripheralId);
+extern BleCoCEATTContext_t BleCoCEATTContext;
+/* USER CODE BEGIN EFP */
+void COC_EATT_PERIPH_APP_Notification( COC_EATT_APP_ConnHandle_Not_evt_t *pNotification );
+void PeriphSendData( void );
+void BLE_SVC_L2CAP_Conn_Update(uint16_t ConnectionHandle, uint16_t conn1, uint16_t conn2);
+uint8_t APP_BLE_ComputeCRC8( uint8_t *DataPtr , uint8_t Datalen );
+/* USER CODE END EFP */
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /*APP_BLE_H */
