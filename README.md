@@ -6,6 +6,8 @@ BLE_App_EATT_central application scans and connects to BLE_App_EATT_periph devic
 
 Both devices support EATT feature.
 
+For more information regarding BLE EATT feature, please visit BLE EATT Wiki documentation (https://wiki.st.com/stm32mcu/wiki/Connectivity:STM32WB-WBA_EATT).
+
 ## Setup
 These applications are running on two **NUCLEO-WBA55CGA boards**. 
 Applications are derived from BLE_DataThroughput_Client (BLE_App_EATT_central) and BLE_DataThroughput_Server (BLE_App_EATT_periph) applications.
